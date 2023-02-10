@@ -7,6 +7,23 @@ import time
 
 from algorithms import run_ga, run_pso, run_cro
 
+def process_data(df:pd.DataFrame):
+    end = df.shape[1]
+
+    # - - - DATAFRAME CONSTANTS - - - #
+    X = df.iloc[:, 0:end-1].values
+    Y = df.iloc[:, end-1].values
+
+    J = len(np.unique(Y)) # Number of classes
+    N,K = X.shape[0],X.shape[1]  # N = number of samples, K = number of features
+
+    # - - - DATAFRAME PARTITIONS - - - #
+    X_scaled = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0)) # Scaling X (min-max normalization)
+    X_train, X_test, Y_train, Y_test = train_test_split(X_scaled, Y, test_size=0.2, random_state=42) # First partition with 20% test data
+    X_trainVal, X_testVal, Y_trainVal, Y_testVal = train_test_split(X_train, Y_train, test_size=0.2, random_state=42) # Second partition with 20% validation data
+    # - - -    - - - #
+    return X_trainVal, X_testVal, Y_trainVal, Y_testVal, X_train, Y_train, X_test, Y_test, J, N, K
+
 def main(seed:int, POPULATION_SIZE:int, MAX_GENERATIONS:int, OPTIMAL_D:int, OPTIMAL_C:int, CROSSOVER_PROBABILITY:float, MUTATION_PROBABILITY:float, W_MAX:float, W_MIN:float, C1:float, C2:float, RHO_0:float, ETA:float, BROADCAST_FRACTION:float, ASEXUAL_FRACTION:float, PREDATION_FRACTION:float, ASEXUAL_PROBABILITY:float ,PREDATION_PROBABILITY:float):
     # Set the path to the data directory
     PORTATIL_DEV = False
